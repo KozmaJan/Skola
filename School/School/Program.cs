@@ -16,7 +16,8 @@ namespace School
             linkedList.Add(4); 
             linkedList.Add(5);
             linkedList.Add(6);
-            linkedList.Find(5);
+            Console.WriteLine(linkedList.Find(5));
+            Console.WriteLine(linkedList.Min());
         }
     }
 
