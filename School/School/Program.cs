@@ -12,6 +12,7 @@ namespace SeznamSpojovaci
         static void Main(string[] args)
         {
             LinkedList linkedList = new LinkedList();
+
             linkedList.Add(-5);
             linkedList.Add(7);
             linkedList.Add(0);
@@ -20,15 +21,39 @@ namespace SeznamSpojovaci
             linkedList.Add(10);
             linkedList.Add(6);
             linkedList.PrintLinkedList();
-            Console.WriteLine("Nachází se číslo 5 v Listě?: "+linkedList.Find(5));
-            Console.WriteLine("Minimum Listu:"+linkedList.Min());
+
+            Console.WriteLine("Nachází se číslo 5 v Listě?: " + linkedList.Find(5));
+
+            Console.WriteLine("Minimum Listu:" + linkedList.Min());
+
+            Console.WriteLine("Srovnání Listu:");
+
             linkedList.SortLinkedList();
+
             linkedList.PrintLinkedList();
+
+            Console.WriteLine("Destruktivni prunik:");
+
+            LinkedList L1 = new LinkedList();
+            L1.Add(4);
+            L1.Add(1);
+            L1.Add(0);
+            L1.Add(2);
+            L1.Add(3);
+            L1.Add(2);
+            LinkedList L2 = new LinkedList();
+            L2.Add(0);
+            L2.Add(2);
+            L2.Add(1);
+            L2.Add(8);
+
+            L1.DestructMerge(L2);
+            L1.PrintLinkedList();
         }
     }
 
-    class Node 
-               
+    class Node
+
     {
         public Node(int value)
         {
@@ -41,11 +66,11 @@ namespace SeznamSpojovaci
     {
         public Node Head { get; set; }
 
-        public void Add(int value) 
+        public void Add(int value)
         {
             if (Head == null)
-                Head = new Node(value); 
-                                      
+                Head = new Node(value);
+
             else
             {
                 Node newNode = new Node(value);
@@ -56,10 +81,10 @@ namespace SeznamSpojovaci
 
         public bool Find(int value)//Najde danný prvek, časová složitost O(n)
         {
-            Node node = Head; 
-            while (node != null) 
+            Node node = Head;
+            while (node != null)
             {
-                if (node.Value == value) 
+                if (node.Value == value)
                     return true;
                 node = node.Next;
             }
@@ -75,7 +100,7 @@ namespace SeznamSpojovaci
                     min = node.Value;
                 node = node.Next;
             }
-            return min; 
+            return min;
         }
         public void PrintLinkedList() //Vypíše linked list, O(n)
         {
@@ -92,7 +117,7 @@ namespace SeznamSpojovaci
             Head = MergeSort(Head); //Začne rekurzivni funkci Mergesort, ktera vrací jenom Node kterym list začíná
         }
         private static Node MergeSort(Node head)
-        { 
+        {
 
             if (head == null || head.Next == null)//Zakončí rekurzivni smyčku když už nemůže podlisty dál rozdělovat
             {
@@ -104,7 +129,7 @@ namespace SeznamSpojovaci
             mid = MergeSort(mid);
 
 
-            return Merge(head,mid); //Nakonec až rozdělí seznam ja jednotlivé prvky, začne je pomocí Merge zpátky skládat
+            return Merge(head, mid); //Nakonec až rozdělí seznam ja jednotlivé prvky, začne je pomocí Merge zpátky skládat
         }
         private static Node Merge(Node head, Node Mid)
         {
@@ -141,6 +166,45 @@ namespace SeznamSpojovaci
             Node temp = slow.Next;//rozdělí list, temp značí Node uprostřed
             slow.Next = null;
             return temp;
+        }
+        public void DestructMerge(LinkedList toMerge) //Funkce pro destruktivni průnik dvou linkedListu
+        {
+            SortLinkedList(); //oba listy nejdřív vzestupně srovná
+            toMerge.SortLinkedList();
+
+            if (toMerge.Head.Next == null) //ošetří pro vyjímku kdy druhý list má méně jak dva prvky
+            {
+                if (Find(toMerge.Head.Value))
+                    Head = toMerge.Head;
+                else
+                    Head = null;
+                return;
+            }
+
+            //započne rekurzivni algoritmus pro nalezeni průniku listu
+            Head = DestructMergeNext(Head, toMerge.Head);
+        }
+        private Node DestructMergeNext(Node head1, Node head2) //rekurze pro mnozinu, časova kompexita O(n), n je součet počtu prvku obou původních listů
+        {
+            //Vezme si dva pod-LinkedListy, jejiž hlavy značí head1 a head2
+            //Kdykoliv je hodnota z jedne hlav menší než ta druhá, posune hlavu daného listu dokud se nebudou obě hlavy rovnat
+            //Poté rekurzivně započne funkci znova, ale až pro druhy prvek každého podlistu
+            //rekurze vrací hlavu pouze jednoho ze zesnamů a to tehdy když narazí na konec listu, nebo se obě hlavy rovnají a rekurzivně najde další prvek
+            while(head1 != null & head2 != null)
+            if (head1.Value == head2.Value)
+            {
+                  head1.Next = DestructMergeNext(head1.Next, head2.Next);
+                  break;
+            }
+            else if (head1.Value < head2.Value)
+            {
+                head1 = head1.Next;
+            }
+            else
+            {
+                head2 = head2.Next;
+            }
+            return head1;
         }
     }
 }
