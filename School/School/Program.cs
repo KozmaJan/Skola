@@ -95,9 +95,9 @@ namespace SeznamSpojovaci
         {
             AddNode(Added.Head);
         }
-        public void AddNode(Node Added)
+        public void AddNode(Node Added) //Pomocna funkce ktera ma napojit Prvek linked listu a všechny prvky za ním
         {
-            if (Added.Next != null)
+            if (Added.Next != null) //rekurzivni funkce se složitostí O(n), kde N je počet prvku v napojovanem LinkedListu/řetězi Node
             {
                 AddNode(Added.Next);
             }
