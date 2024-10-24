@@ -32,23 +32,36 @@ namespace SeznamSpojovaci
 
             linkedList.PrintLinkedList();
 
-            Console.WriteLine("Destruktivni prunik:");
 
             LinkedList L1 = new LinkedList();
-            L1.Add(4);
-            L1.Add(1);
-            L1.Add(0);
             L1.Add(2);
             L1.Add(3);
             L1.Add(2);
+            L1.Add(0);
+            L1.Add(1);
+            L1.Add(4);
             LinkedList L2 = new LinkedList();
-            L2.Add(0);
-            L2.Add(2);
-            L2.Add(1);
             L2.Add(8);
+            L2.Add(1);
+            L2.Add(2);
+            L2.Add(0);
 
-            L1.DestructMerge(L2);
-            L1.PrintLinkedList();
+            //Console.WriteLine("Kombinace dvou listu");
+            //L1.AddList(L2);
+            //L1.PrintLinkedList();
+
+            //Console.WriteLine("Soucet listu pod sebou:");
+            //L1.Sum(L2);
+            //L1.PrintLinkedList();
+
+            //Console.WriteLine("Destruktivni pridani");
+            //L1.DestructAdd(L2);
+            //L1.PrintLinkedList();
+
+
+            //Console.WriteLine("Destruktivni prunik:");
+            //L1.DestructMerge(L2);
+            //L1.PrintLinkedList();
         }
     }
 
@@ -77,6 +90,18 @@ namespace SeznamSpojovaci
                 newNode.Next = Head;
                 Head = newNode;
             }
+        }
+        public void AddList(LinkedList Added)//Funkce pro spojeni dvou linkedlistu, kde parametr je hlava listu k připojení
+        {
+            AddNode(Added.Head);
+        }
+        public void AddNode(Node Added)
+        {
+            if (Added.Next != null)
+            {
+                AddNode(Added.Next);
+            }
+            Add(Added.Value);
         }
 
         public bool Find(int value)//Najde danný prvek, časová složitost O(n)
@@ -205,6 +230,108 @@ namespace SeznamSpojovaci
                 head2 = head2.Next;
             }
             return head1;
+        }
+        public void DestructAdd(LinkedList toAdd) //časová komplexita O(2n + t), kde t je počet prvku v přidaném listě, n je původní počet prvku v obou listech, n je dvakrát neboť Remove extra a SortLinkedList jsou dvě funkce s komplexitou O(n)
+        {
+            AddList(toAdd); //Slouci Listy pomoci predem definovane funkce
+            SortLinkedList(); //Seřadí je
+            Head = RemoveExtra(Head); //Začne rekurzivní algoritmus který přeskoči opakující se prvky v Listě
+        }
+
+        private Node RemoveExtra(Node head) //funkce která kontroluje, jestli násleující prvek od "head", neni stejný jako head, pokud ano, odstraní ho a naváže head na přespříští prvek
+        {
+                while (head.Value == head.Next.Value) //Přeskakuje následující prvek v linked listu, dokud se současný a přiští prvek nerovná
+                {
+                    head.Next = head.Next.Next;
+                if (head.Next == null)
+                    break;
+                }
+                if (head.Next != null)
+            {
+                head.Next = RemoveExtra(head.Next); //opakuje funkci pro příští unikátní prvek, dokud neni na konci LinkedListu
+            }
+            return head;
+        }
+        public void Sum(LinkedList Added) {//Soucet dvou LinkedListu
+            //Nejdriv obrati oba listy
+            Reverse();
+            Added.Reverse();
+
+            int zbytek = 0; //Pamatuje si zbytek při poslednim sčítání (jestli musí přidat 1 k příští cifře)
+            
+            //Klíčové slovíčko ref znamená že se hodnota bude "vracet", společně s běžným výstupem. Program si cifru si pamatuje v rámci vlákna
+
+            Node vysledek = Secti(Head, Added.Head, ref zbytek); //Rekurzivni funkce pro scitani "cifer"
+
+
+            if (zbytek != 0) //Jestli musí přidat cifru naví ke konci počítání
+                Add(zbytek);
+
+            Head = vysledek;
+
+            Reverse(); //Znovu obrati do původního stavu
+
+            
+        }
+        private Node Secti(Node cislo1, Node cislo2, ref int zbytek) //Rekurzivni sčítání cifry po cifře
+        { //Časová komplexita O(n)
+            if (cislo1 == null && cislo2 == null && zbytek == 0) //Pokud uź nejsou žádné cifry sčítání, vrátí null a zaćne uzavírat rekurzi
+                return null;
+                
+            int sum = zbytek;
+
+            //Pokud nejsou null, přičte k sobě cifry pod sebou
+            if (cislo1 != null)
+            {
+                sum += cislo1.Value;
+                cislo1 = cislo1.Next;
+            }
+            if (cislo2 != null)
+            {
+                sum += cislo2.Value;
+                cislo2 = cislo2.Next;
+            }
+
+                zbytek = Convert.ToInt32(Math.Floor(Convert.ToDouble(sum/10))); //jestli je součet cifer víc jak 10, najde zbytek
+                
+            
+            Node soucet = new Node(sum%10); //dělení se zbytkem pro nalezeni zbytku
+
+            soucet.Next = Secti(cislo1, cislo2, ref zbytek);  //Započne rekurzi znova pro další cifru, dokud nedojde k poslednim cifram
+
+            return soucet;
+        }
+        public void Reverse()
+        {
+            Head = ReverseList(Head);
+        }
+        private static Node ReverseList(Node head) //Obrátí list naruby, O(n)
+        {
+            Node curr = head;
+            Node prev = null;
+            Node next;
+
+            while (curr != null)
+            {
+                next = curr.Next;
+                curr.Next = prev;
+                prev = curr;
+                curr = next;
+            }
+            return prev;
+        }
+
+        public int Length()
+        {
+            Node head = Head;
+            //Iterativne najde pocet prvku v Linked Listu, O(n)
+            int count = 0;
+            while(head != null)
+            {
+                count++;
+                head = head.Next;
+            }
+            return count;
         }
     }
 }
