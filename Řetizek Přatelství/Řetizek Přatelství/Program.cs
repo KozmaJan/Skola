@@ -7,43 +7,56 @@ namespace Řetizek_Přatelství
     {
         static void Main(string[] args)
         {
+            //sebere vstup
             Console.WriteLine("Kolik lidí chcete prozoumat?");
             int N = 0;
+            //smyčka pro vyjimky, když uživatel napíše vstup špatně
             while (true) {
-                if (Int32.TryParse(Console.ReadLine(), out N)) {
+                if (Int32.TryParse(Console.ReadLine(), out N)) {//používa Int32.Parse, jde taky použít jenom try
                     break;
                 }
                 else {
                     Console.WriteLine("Zadejte pouze číslem.");
                 }
             }
-            if (N > 0)
-            {
 
-                int[,,] vztahy = MapRelations(N);
-                Console.Write("0 ");
-                for (int b = 0; b < N; b++)
+            if (N >= 2)
+            {
+                int[,,] vztahy = MapRelations(N);//funkce pro vytvoření 3D pole
+
+                //vypíše krásnou tabulku
+                if (true) //vše v true podmince pro připad že si to rozmysĺím a tabulka uź mi nepřijde tak hezká. Vypnutí v debugu
                 {
-                    Console.Write((b + 1) + " ");
-                }
-                Console.WriteLine();
-                for (int a = 0; a < N; a++) {
-                    Console.Write((a + 1) +" ");
-                for (int b = 0; b < N; b++)
-                {
-                    if (a == b)
+                    Console.Write("0 ");
+                    for (int b = 0; b < N; b++)
                     {
-                        Console.Write("# ");
+                        Console.Write((b + 1) + " ");
                     }
-                    else {
-                        Console.Write(vztahy[a, b, 0] + " ");
+                    Console.WriteLine();
+                    for (int a = 0; a < N; a++)
+                    {
+                        Console.Write((a + 1) + " ");
+                        for (int b = 0; b < N; b++)
+                        {
+                            if (a == b)
+                            {
+                                Console.Write("# ");
+                            }
+                            else
+                            {
+                                Console.Write(vztahy[a, b, 0] + " ");
+                            }
+                        }
+                        Console.WriteLine();
                     }
-                }
-                Console.WriteLine();
-            }
+                }//konec kodu pro tabulku
+
+
+            //Najde mezi kým chceme spo najít
             Console.WriteLine("Napište mezi kterými dvouma lidmi chcete najít. Např ve formátmu \"7-2\"");
             int start = 0;
             int cil = 0;
+
             while (true) {
                 try {
                     string[] startcil = Console.ReadLine().Split("-");
@@ -52,38 +65,41 @@ namespace Řetizek_Přatelství
                 }
                 catch
                 {
-                    Console.WriteLine("Nenapsali jste ve správném formátů. Zkuste lépe a radostněji.");
+                    Console.WriteLine("Nenapsali jste ve správném formátů. Zku ste lépe a radostněji.");
                     continue;
                 }
                 break;
             }
+
+            //BFS pro nalezeni jestli existuje spoj
             int current = start;
-            List<int> toSearch = new List<int>();
+            Queue<int> toSearch = new Queue<int>();
             bool notfound = false;
             int step = 0;
             while (current != cil)
             {
                 step++;
-                for (int a = 0; a < N; a++)
+                for (int a = 0; a < N; a++) //iteruje tabulku
                 {
                     if (vztahy[current, a, 0] == 1 && vztahy[current, a, 1] == 0)
                     {
-                        toSearch.Add(a);
+                        toSearch.Enqueue(a); //přidá prvek do fronty, pokud sousedí s current
                         vztahy[current, a, 1] = 1;
-                        vztahy[current, a, 2] = step;
+                        vztahy[current, a, 2] = step; //step určuje, jak daleko je od startu
                         vztahy[a, current, 1] = 1;
                         vztahy[a, current, 2] = step;
                         }
                 }
-                if (toSearch.Count == 0)
+                if (toSearch.Count == 0) //pokud je fronta prázdńa nenalezne nic
                 {
                     notfound = true;
                     Console.WriteLine("Nenalezeno");
                     break;
                 }
-                current = toSearch[0];
-                toSearch.RemoveAt(0);
+                current = toSearch.Dequeue();
             }
+
+            //pokud nalezne začne backtracovat, a vypíše nejkratší cestu
             if (notfound == false)
             {
                 Console.WriteLine("Nalezeno");
@@ -95,42 +111,49 @@ namespace Řetizek_Přatelství
                     {
                         if (current == start)
                             {
-                                break;
+                                break;//pokud dojde ke startu
                             }
-                        if (vztahy[current, a, 0] == 1 && vztahy[current, a, 1] == 1)
+                        if (vztahy[current, a, 0] == 1 && vztahy[current, a, 1] == 1 && vztahy[current, a, 2] == step)//podmínka která sleduje step, je jen pro ujištění ze vypíše nejratŠí cestu, od by však fungoval perfektně bez ní
                         {
                             vztahy[current, a, 1] = 2;
                             vztahy[a, current, 1] = 2;
                             path.Add(a);
                             current = a;
-                            
+                            break;//prolomí smyčku, aby nedělal zbytečné mezikroky
                         }
                     }
                     step--;
                 }
-                    Console.Write((cil+1));
-                    foreach (int tile in path)
+                //vypíše nejkratší cestu z path
+                Console.Write((cil+1));
+                foreach (int tile in path)
                 {
                     Console.Write("-"+(tile+1));
                 }
             }
-            else
+
+            else//vypíše když nenajde žádnou spojitost
             {
                 Console.WriteLine("Mezi lidmi " + start + " a " + cil + " neexistuje žádná spojitost.");
             }
         }
-            else
+            else //podmínka pokud zadá méně jak dva lidi
             {
                 Console.WriteLine("Zdá se źe nechete zkoumat žádne lidi. Moje práce zde končí, nashledanou.");
             }
+
             int[,,] MapRelations(int N)
             {
-                int[,,] relations = new int[N, N, 3];
+                int[,,] relations = new int[N, N, 3]; //Vytvoří 3D array spojů, NxN strana grafu je pro mapu spojů,
+                                                      //zbylé 2 vrstvy ve třetim rozměru si pamatují jestli je pole už navštíveno, aby se kód nezasmyčkoval
+                                                      //třetí vstrva si pamatuje vzdálenost od začátku, aby vždy vypsal jenom tu nejkratší cestu, krom toho j všek pole zbytné
                 Console.WriteLine("Vypište všechny dvojice které chete zmapovat. Např.: \"3-5 1-5\"");
+                //zeptá se na input
                 while (true)
                 {
                     try
                     {
+                        //vytvoří NxNx3 matici, kde je každé pole rovno nule
                         for (int a= 0; a<N;a++)
                         {
                             for (int b = 0; b<N; b++)
@@ -143,16 +166,17 @@ namespace Řetizek_Přatelství
                                 relations[b, a, 2] = 0;
                                 }
                         }
-                        string[] dvojice = Console.ReadLine().Split();
-                        string[] prvek;
+                        //zpracuje uživatelův vstup
+                        string[] dvojice = Console.ReadLine().Split(); //rozdělí podle mezer
+                        string[] prvek;                                //placeholder hodnota pro dosazování do matice
                         foreach (string prvky in dvojice)
                         {
-                            prvek = prvky.Split('-');
+                            prvek = prvky.Split('-');                  //Rozdělí podle pomlčky
                             relations[Convert.ToInt32(prvek[0]) - 1, Convert.ToInt32(prvek[1]) - 1, 0] = 1;
                             relations[Convert.ToInt32(prvek[1]) - 1, Convert.ToInt32(prvek[0]) - 1, 0] = 1;
                         }
                     }
-                    catch
+                    catch //kód celé funkce je v try{}, pokud ted uživatel zadal funcki špatně zeptá se o vstup znovu
                     {
                         Console.WriteLine("Dvojice napsány ve špatném formátu. Zkontrolujte jestli máte zápis správně a zkuste znovu;");
                         continue;
