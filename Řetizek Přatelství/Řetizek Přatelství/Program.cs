@@ -16,19 +16,21 @@ namespace Řetizek_Přatelství
                     break;
                 }
                 else {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Zadejte pouze číslem.");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
             }
-
             if (N >= 2)
             {
                 int[,,] vztahy = MapRelations(N);//funkce pro vytvoření 3D pole
 
+                Console.WriteLine();
                 //vypíše krásnou tabulku
                 if (true) //vše v true podmince pro připad že si to rozmysĺím a tabulka uź mi nepřijde tak hezká. Vypnutí v debugu
                 {
                     Console.Write("0 ");
-                    for (int b = 0; b < N; b++)
+                    for (int b = 0; b < N; b++) //vrchni řádek tabulky
                     {
                         Console.Write((b + 1) + " ");
                     }
@@ -40,15 +42,28 @@ namespace Řetizek_Přatelství
                         {
                             if (a == b)
                             {
+                                Console.ForegroundColor = ConsoleColor.DarkGray;
                                 Console.Write("# ");
+                                Console.ForegroundColor = ConsoleColor.White;
                             }
                             else
                             {
+                                if (vztahy[a, b, 0] == 1)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Green;
+                                }
+                                else
+                                {
+                                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                                }
+
                                 Console.Write(vztahy[a, b, 0] + " ");
+                                Console.ForegroundColor = ConsoleColor.White;
                             }
                         }
                         Console.WriteLine();
                     }
+                    Console.WriteLine();
                 }//konec kodu pro tabulku
 
 
@@ -59,13 +74,24 @@ namespace Řetizek_Přatelství
 
             while (true) {
                 try {
-                    string[] startcil = Console.ReadLine().Split("-");
+                    string vstup = Console.ReadLine();
+                    string[] startcil;
+
+                    if (vstup.Contains("-")){ //ošetření pro to jestli uživatel napíše vstup jako "1-7" nebo "1 7"
+                            startcil = vstup.Split("-");
+                        }
+                    else {
+                         startcil = vstup.Split();
+                    }
+
                     start = Convert.ToInt32(startcil[0])-1;
                     cil = Convert.ToInt32(startcil[1])-1;
                 }
                 catch
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Nenapsali jste ve správném formátů. Zku ste lépe a radostněji.");
+                    Console.ForegroundColor = ConsoleColor.White;
                     continue;
                 }
                 break;
@@ -92,9 +118,13 @@ namespace Řetizek_Přatelství
                 }
                 if (toSearch.Count == 0) //pokud je fronta prázdńa nenalezne nic
                 {
-                    notfound = true;
-                    Console.WriteLine("Nenalezeno");
-                    break;
+                        notfound = true;
+
+                        Console.ForegroundColor = ConsoleColor.DarkYellow; //barvičky
+                        Console.WriteLine("Nenalezeno");
+                        Console.ForegroundColor = ConsoleColor.White;
+
+                        break;
                 }
                 current = toSearch.Dequeue();
             }
@@ -102,8 +132,11 @@ namespace Řetizek_Přatelství
             //pokud nalezne začne backtracovat, a vypíše nejkratší cestu
             if (notfound == false)
             {
-                Console.WriteLine("Nalezeno");
-                List<int> path = new List<int>();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Nalezeno");
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    List<int> path = new List<int>();
                 current = cil;
                 while (current != start)
                 {
@@ -130,12 +163,15 @@ namespace Řetizek_Přatelství
                 {
                     Console.Write("-"+(tile+1));
                 }
+                Console.ReadKey();
             }
 
             else//vypíše když nenajde žádnou spojitost
             {
-                Console.WriteLine("Mezi lidmi " + start + " a " + cil + " neexistuje žádná spojitost.");
-            }
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.WriteLine("Mezi lidmi " + (start+1) + " a " + (cil+1) + " neexistuje žádná spojitost.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
         }
             else //podmínka pokud zadá méně jak dva lidi
             {
@@ -178,7 +214,9 @@ namespace Řetizek_Přatelství
                     }
                     catch //kód celé funkce je v try{}, pokud ted uživatel zadal funcki špatně zeptá se o vstup znovu
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Dvojice napsány ve špatném formátu. Zkontrolujte jestli máte zápis správně a zkuste znovu;");
+                        Console.ForegroundColor = ConsoleColor.White;
                         continue;
                     }
                     break;
