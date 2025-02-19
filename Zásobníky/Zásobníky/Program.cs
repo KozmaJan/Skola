@@ -40,7 +40,28 @@ namespace Zásobníky
         public void rozklad()
         {
             int cislo = Convert.ToInt32(Console.ReadLine());
-            Stack<int> zasobnik = new Stack<int>();
+            Stack<int> turned = new Stack<int>();
+            Stack<int> unturned = new Stack<int>();
+            Stack<int> final = new Stack<int>();
+            for (int a = 0; a < cislo; a++)
+            {
+                unturned.Push(1);
+            }
+            int n = 1;
+            int m = 1;
+            while (n <= cislo)
+            {
+                n += 1;
+                 turned.Push(unturned.Pop() +unturned.Pop());
+            }
+        }
+        public void vypis(Stack<int> zasobnik)
+        {
+            Console.Write(zasobnik.Pop());
+            foreach (int piece in zasobnik)
+            {
+                Console.Write("+"+piece);
+            }
         }
     }
 }
