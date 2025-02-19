@@ -216,10 +216,13 @@ namespace BST
         }
         public void Balance()
         {
-            Node<T> _balance(List<Node<T>> nodeList, Node<T> node)
-            {
-                
-                return null;
+            Node<T> _balance(List<Node<T>> nodeList, int start, int end)
+            {   
+                int index = Convert.ToInt32(Math.Floor(Convert.ToDouble(start + end / 2)));
+                Node<T> node = nodeList[index];
+                node.children[0] = _balance(nodeList, start, index - 1);
+                node.children[1] = _balance(nodeList, index + 1, end);
+                return node;
             }
             List<Node<T>> _treeToList(Node<T> node, List<Node<T>> nodeList)
             {
@@ -233,7 +236,7 @@ namespace BST
                 return nodeList;
             }
             List<Node<T>> nodeList = _treeToList(root, new List<Node<T>>());
-            root = _balance(nodeList, root);
+            root = _balance(nodeList, 0, nodeList.Count);
         }
 
         public int FindDepth()
