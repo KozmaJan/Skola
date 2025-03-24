@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
 
 namespace TopologickéSeřazení
 {
@@ -7,6 +12,20 @@ namespace TopologickéSeřazení
         static void Main(string[] args)
         {
             Graph graf = new Graph();
+            Console.WriteLine("Zadejte vstup.");
+            string[] input = Console.ReadLine().Split(' ');
+            List<char> alphabet = new List<char>(); //each letter has its weigh --> in how manyth cycle were they added
+            List<string> toCompare = new List<string>();
+            toCompare.AddRange(input);
+
+            while (toCompare.Count > 1) {
+                int i = 0;
+            for (int j = 0; j < toCompare.Count -1; i++)
+            {
+                string   comp1 = toCompare[j];
+                string   comp2 = toCompare[j + 1];
+                
+            }
         }
 
     }
