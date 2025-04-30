@@ -9,11 +9,20 @@ namespace AritmetickýVýpočet
         {
             Console.WriteLine("Hello World!");
             Pocitadlo pocitadlo = new Pocitadlo();
-            float res = pocitadlo.Spocitat("2 3 5 * +");
+            float res;
+
+            Console.WriteLine("(Zadejte Postfix:)");
+            res = pocitadlo.Spocitat("2 3 5 * +");
             Console.WriteLine("Výsledek vašeho příkladu je "+ res);
+
+            Console.WriteLine("(Zadejte Prefix:)");
             res = pocitadlo.Spocitat(" + 2 * 3 5 ");
             Console.WriteLine("Výsledek vašeho příkladu je " + res);
-           
+
+            Console.WriteLine("(Zadejte infix:)");
+            res = pocitadlo.Spocitat("2 + 3 * 5");
+            Console.WriteLine("Výsledek vašeho příkladu je "+ res);
+
         }
     }
     class Pocitadlo
@@ -32,6 +41,8 @@ namespace AritmetickýVýpočet
                         return fromPrefix(vyraz);
                     case "postfix":
                         return fromPostfix(vyraz);
+                    case "infix":
+                        return fromPostfix(infixToPostfix(vyraz));
                 }
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Zkontrolujte pravopis.");
@@ -64,6 +75,20 @@ namespace AritmetickýVýpočet
                             }
                             operands.Push(operands.Pop() / operand);
                             break;
+                        case "%":
+                            operand = operands.Pop();
+                            if (operand == 0f)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                throw new DivideByZeroException("Kámo. Fakt dělíš nulou teď? (ಠ_ಠ)");
+                                Console.ForegroundColor = ConsoleColor.Gray;
+                            }
+                            operands.Push(operands.Pop() % operand);
+                            break;
+                        case "^":
+                            operand = operands.Pop();
+                            operands.Push((float)(Math.Pow((double)(new decimal(operands.Pop())), (double)(new decimal(operand)))));
+                            break;
                         default:
                             float.TryParse(element, out operand);
                             operands.Push(operand);
@@ -89,12 +114,12 @@ namespace AritmetickýVýpočet
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Jejda něco se pokazilo, starý brachu.");
+                Console.WriteLine("   /\\_/\\  The council of wise owls is confused!   /\\_/\\\n  ((@v@))      Prosím zkontrolujte zadání!       ((@v@))\n ():::::()                                      ():::::()\n   VV-VV          /\\_/\\         /\\_/\\             VV-VV\n                 ((@v@))       ((@v@))\n                ():::::()     ():::::()\n                  VV-VV         VV-VV\n ");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine("\n⬜⬜⬛⬜⬛⬛⬛⬛⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜\n⬜⬛⬜⬛⬜⬜⬜⬜⬛⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜\n⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜\n⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬜⬜⬛⬜\n⬛⬜⬜⬛⬜⬜⬛⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬛⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬛⬜⬜⬛⬜⬛\n⬛⬜⬜⬜⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬛⬛⬜⬛\n⬛⬜⬛⬜⬛⬜⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬜\n⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬜\n⬜⬛⬜⬜⬛⬛⬜⬜⬛⬛⬛⬛⬜⬜⬛⬛⬜⬜⬛⬜\n⬜⬛⬜⬛⬜⬛⬜⬜⬛⬜⬜⬛⬜⬜⬛⬛⬜⬛⬜⬜\n⬜⬜⬛⬜⬜⬛⬜⬛⬜⬜⬜⬛⬜⬛⬜⬜⬛⬜⬜⬜\n⬜⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬜⬜⬜");
                 return float.PositiveInfinity;
             }
             float ret = operands.Pop();
-            Console.WriteLine(postfixToInfix(vyraz) + " = "+ ret);
+            Console.WriteLine("Infix: "+postfixToInfix(vyraz) + " = "+ ret);
             return ret;
         }
         private float fromPrefix(string vyraz)
@@ -135,6 +160,20 @@ namespace AritmetickýVýpočet
                                         }
                                         operands.Push(operands.Pop() / operand);
                                         break;
+                                    case "%":
+                                        operand = operands.Pop();
+                                        if (operand == 0f)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            throw new DivideByZeroException("Kámo. Fakt dělíš nulou teď? (ಠ_ಠ)");
+                                            Console.ForegroundColor = ConsoleColor.Gray;
+                                        }
+                                        operands.Push(operands.Pop() % operand);
+                                        break;
+                                    case "^":
+                                        operand = operands.Pop();
+                                        operands.Push((float)(Math.Pow((double)(new decimal(operands.Pop())), (double)(new decimal(operand)))));
+                                        break;
                                     default:
                                         Console.ForegroundColor = ConsoleColor.Yellow;
                                         Console.WriteLine("Neplatný znak. Zkosntrolujte prosím zadání.");
@@ -170,11 +209,11 @@ namespace AritmetickýVýpočet
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Jejda něco se pokazilo, starý brachu.");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine("\n⬜⬜⬛⬜⬛⬛⬛⬛⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜\n⬜⬛⬜⬛⬜⬜⬜⬜⬛⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜\n⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜\n⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬜⬜⬛⬜\n⬛⬜⬜⬛⬜⬜⬛⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬛⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬛⬜⬜⬛⬜⬛\n⬛⬜⬜⬜⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬛⬛⬜⬛\n⬛⬜⬛⬜⬛⬜⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛\n⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬜\n⬜⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬜\n⬜⬛⬜⬜⬛⬛⬜⬜⬛⬛⬛⬛⬜⬜⬛⬛⬜⬜⬛⬜\n⬜⬛⬜⬛⬜⬛⬜⬜⬛⬜⬜⬛⬜⬜⬛⬛⬜⬛⬜⬜\n⬜⬜⬛⬜⬜⬛⬜⬛⬜⬜⬜⬛⬜⬛⬜⬜⬛⬜⬜⬜\n⬜⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬜⬛⬜⬜⬜⬜⬜⬜⬜");
+                Console.WriteLine("   /\\_/\\  The council of wise owls is confused!   /\\_/\\\n  ((@v@))      Prosím zkontrolujte zadání!       ((@v@))\n ():::::()                                      ():::::()\n   VV-VV          /\\_/\\         /\\_/\\             VV-VV\n                 ((@v@))       ((@v@))\n                ():::::()     ():::::()\n                  VV-VV         VV-VV\n ");
                 return float.PositiveInfinity;
             }
             float ret = operands.Pop();
-            Console.WriteLine(prefixToInfix(vyraz) + " = " + ret);
+            Console.WriteLine("Infix: "+prefixToInfix(vyraz) + " = " + ret);
             return ret;
         }
         private string postfixToInfix(string vyraz) {
@@ -194,6 +233,8 @@ namespace AritmetickýVýpočet
                             break;
                         case "*":
                         case "/":
+                        case "^":
+                        case "%":
                             operand = elements.Pop();
                             elements.Push(" " + elements.Pop() + " " + element + " " + operand + " ");
                             break;
@@ -259,6 +300,8 @@ namespace AritmetickýVýpočet
                                         break;
                                     case "*":
                                     case "/":
+                                    case "%":
+                                    case "^":
                                         operand = elements.Pop();
                                         elements.Push(" " + elements.Pop() + " " + operat + " " + operand + " ");
                                         break;
@@ -272,6 +315,7 @@ namespace AritmetickýVýpočet
                         operators.Push(element);
                     }
                 }
+            return elements.Pop();
             }
             catch (InvalidOperationException)
             {
@@ -279,9 +323,81 @@ namespace AritmetickýVýpočet
                 Console.WriteLine("Špatně zapsaný výraz.");
                 Console.ForegroundColor = ConsoleColor.Gray;
             }
-            return elements.Pop();
             return "ERROR";
         }
+        private int prednost(string oper)
+        {
+            if (oper == "*" || oper == "/" || oper == "%")
+                return 3;
+            else if (oper == "+" || oper == "-")
+                return 2;
+            else if (oper == "^")
+                return 1;
+            else return -1;
+        }
+        public string infixToPostfix(string vyraz) {
+            vyraz.Replace("((", "( (");
+            vyraz.Replace("))", ") )");
+            string[] infix = vyraz.Split();
+            Stack<string> elements = new Stack<string>();
+            string postfix = "";
+            string _out;
+            try { 
+            foreach (string oper in infix)
+            {
 
+                if (float.TryParse(oper,out float result))
+                {
+                    postfix += oper + " ";
+                }
+                else
+                {
+                    switch (oper)
+                    {
+                        case "+":
+                        case "-":
+                        case "*":
+                        case "/":
+                        case "%":
+                        case "^":
+                            while (elements.Count > 0 && prednost(oper) <= prednost(elements.Peek()))
+                            {
+                                _out = elements.Peek();
+                                elements.Pop();
+                                postfix += _out + " ";
+                            }
+                            elements.Push(oper);
+                            break;
+                        case "(":
+                            elements.Push(oper);
+                            break;
+                        case ")":
+                            while (elements.Count > 0 && (_out = elements.Peek()) != "(")
+                            {
+                                elements.Pop();
+                                postfix += _out + " ";
+                            }
+                            if (elements.Count > 0 && (_out = elements.Peek()) == "(")
+                                elements.Pop();
+                            break;
+                    }
+                }
+            }
+            while (elements.Count > 0)
+            {
+                _out = elements.Peek();
+                elements.Pop();
+                postfix += _out + " ";
+            }
+            return postfix.Trim();
+            }
+            catch (InvalidOperationException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Špatně zapsaný výraz.");
+                Console.ForegroundColor = ConsoleColor.Gray;
+            }
+            return "ERROR";
+        }
     }
 }
