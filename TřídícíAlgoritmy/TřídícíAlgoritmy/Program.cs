@@ -87,6 +87,7 @@ namespace TřídícíAlgoritmy
             return newList;
      
         }
+        }
         public class MyBenchmark
         {
             public int[] numbers1;
@@ -95,12 +96,12 @@ namespace TřídícíAlgoritmy
             public MyBenchmark()
             {
                 Random rnd = new Random();
-                int size = 1000;
+                int size = 1000000;
                 numbers1 = new int[size];
                 numbers2 = new int[size];
                 for (int i = 0; i < size; i++)
                 {
-                    numbers1[i] = rnd.Next(-50, 50);
+                    numbers1[i] = rnd.Next(-500, 501);
                     numbers2[i] = numbers1[i];
                 }
                 mergesort_2();
@@ -142,7 +143,7 @@ namespace TřídícíAlgoritmy
                 secondList = MergeSort_2(secondList);
 
 
-                return Merge(firstList, secondList); //Nakonec až rozdělí seznam ja jednotlivé prvky, začne je pomocí Merge zpátky skládat
+                return Merge_2(firstList, secondList); //Nakonec až rozdělí seznam ja jednotlivé prvky, začne je pomocí Merge zpátky skládat
             }
             public static List<int> Merge_2(List<int> firstList, List<int> secondList)
             {
@@ -263,6 +264,5 @@ namespace TřídícíAlgoritmy
                 return newList;
 
             }
-        }
         }
     }
