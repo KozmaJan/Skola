@@ -12,7 +12,7 @@ namespace AritmetickýVýpočet
             float res;
 
             Console.WriteLine("(Zadejte Postfix:)");
-            res = pocitadlo.Spocitat("2 3 5 * +");
+            res = pocitadlo.Spocitat("/ * + 1.5 2.5 - 4.4 2.2 + 3.0 1.0");
             Console.WriteLine("Výsledek vašeho příkladu je "+ res);
 
             Console.WriteLine("(Zadejte Prefix:)");
@@ -22,7 +22,6 @@ namespace AritmetickýVýpočet
             Console.WriteLine("(Zadejte infix:)");
             res = pocitadlo.Spocitat("2 + 3 * 5");
             Console.WriteLine("Výsledek vašeho příkladu je "+ res);
-
         }
     }
     class Pocitadlo
@@ -34,13 +33,16 @@ namespace AritmetickýVýpočet
         }
         public float Spocitat(string vyraz)
         {
-            Console.WriteLine("Zadali jste váš výraz ("+vyraz+") v zápisu \"prefix\", \"postfix\" nebo \"infix\"?");
+            Console.WriteLine("Zadali jste váš výraz ("+vyraz+") v zápisu \"prefix\" (1), \"postfix\" (2) nebo \"infix\" (3)?");
             while(true){
                 switch (Console.ReadLine()) {
                     case "prefix":
+                    case "1":
                         return fromPrefix(vyraz);
                     case "postfix":
+                    case "2":
                         return fromPostfix(vyraz);
+                    case "3":
                     case "infix":
                         return fromPostfix(infixToPostfix(vyraz));
                 }
@@ -51,7 +53,7 @@ namespace AritmetickýVýpočet
         }
         private float fromPostfix(string vyraz)
         {
-            string[] postfix = vyraz.Split();
+            string[] postfix = vyraz.Replace('.', ',').Split(' ');
             float operand;
             try {
                 foreach (string element in postfix) {
@@ -95,6 +97,7 @@ namespace AritmetickýVýpočet
                             break;
 
                     }
+                    Console.WriteLine(operands.Peek());
                 }
             }
             catch(DivideByZeroException) {
@@ -114,17 +117,21 @@ namespace AritmetickýVýpočet
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Jejda něco se pokazilo, starý brachu.");
-                Console.WriteLine("   /\\_/\\  The council of wise owls is confused!   /\\_/\\\n  ((@v@))      Prosím zkontrolujte zadání!       ((@v@))\n ():::::()                                      ():::::()\n   VV-VV          /\\_/\\         /\\_/\\             VV-VV\n                 ((@v@))       ((@v@))\n                ():::::()     ():::::()\n                  VV-VV         VV-VV\n ");
                 Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine("   /\\_/\\  The council of wise owls is confused!   /\\_/\\\n  ((@v@))      Prosím zkontrolujte zadání!       ((@v@))\n ():::::()                                      ():::::()\n   VV-VV          /\\_/\\         /\\_/\\             VV-VV\n                 ((@v@))       ((@v@))\n                ():::::()     ():::::()\n                  VV-VV         VV-VV\n ");
                 return float.PositiveInfinity;
             }
             float ret = operands.Pop();
+            if (ret == -0)
+            {
+                ret = 0;
+            }
             Console.WriteLine("Infix: "+postfixToInfix(vyraz) + " = "+ ret);
             return ret;
         }
         private float fromPrefix(string vyraz)
         {
-            string[] prefix = vyraz.Split();
+            string[] prefix = vyraz.Replace('.', ',').Split(' ');
             float operand;
             int operand_counter = 0;
             try
@@ -213,6 +220,10 @@ namespace AritmetickýVýpočet
                 return float.PositiveInfinity;
             }
             float ret = operands.Pop();
+            if (ret == -0)
+            {
+                ret = 0;
+            }
             Console.WriteLine("Infix: "+prefixToInfix(vyraz) + " = " + ret);
             return ret;
         }
@@ -255,14 +266,16 @@ namespace AritmetickýVýpočet
         }
         public string toInfix(string vyraz)
         {
-            Console.WriteLine("Je váš výraz, který chete převést na infix: (" + vyraz + ") v zápisu \"prefix\", \"postfix\"?");
+            Console.WriteLine("Je váš výraz, který chete převést na infix: (" + vyraz + ") v zápisu \"prefix\" (1), \"postfix\" (2)?");
             while (true)
             {
                 switch (Console.ReadLine())
                 {
                     case "prefix":
+                    case "1":
                         return prefixToInfix(vyraz);
                     case "postfix":
+                    case "2":
                         return postfixToInfix(vyraz);
                 }
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -273,7 +286,7 @@ namespace AritmetickýVýpočet
         private string prefixToInfix(string vyraz)
         {
             Stack<string> elements = new Stack<string>();
-            string[] prefix = vyraz.Split();
+            string[] prefix = vyraz.Replace('.', ',').Split(' ');
             float f;
             string operand;
             string operat;
@@ -338,7 +351,7 @@ namespace AritmetickýVýpočet
         public string infixToPostfix(string vyraz) {
             vyraz.Replace("((", "( (");
             vyraz.Replace("))", ") )");
-            string[] infix = vyraz.Split();
+            string[] infix = vyraz.Replace('.', ',').Split(' ');
             Stack<string> elements = new Stack<string>();
             string postfix = "";
             string _out;
