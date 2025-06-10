@@ -81,23 +81,31 @@ namespace VyrazovyStrom
             Prefix();
             PostFix();
             Infix();
+            fromPostfix(PostFix());
         }
-        public void PostFix() {
+        public string PostFix() {
+
+            string output = " ";
+
             void inorder(Node root)
             {
                 if (root == null) return;
 
                 inorder(root.leftSon);
                 inorder(root.rightSon);
-                Console.Write(root.value + " ");
+                //Console.Write(root.value + " ");
+                output += (root.value +" ");
             }
             Console.Write("Postfix: ");
 
             inorder(leftSon);
             inorder(rightSon);
-            Console.Write(value + " ");
+            //Console.Write(value + " ");
+            output += (value +" ");
 
-            Console.WriteLine();
+            Console.WriteLine(output);
+
+            return output;
         }
         public void Prefix(){
             void inorder(Node root)
@@ -196,6 +204,88 @@ namespace VyrazovyStrom
                 }
             }
 
+        }
+        private float fromPostfix(string vyraz)
+        {
+            Stack<float> operands = new Stack<float>();
+            Stack<string> operators = new Stack<string>();
+            string[] postfix = vyraz.Trim().Replace('.', ',').Split(' ');
+            float operand;
+            try
+            {
+                foreach (string element in postfix)
+                {
+                    switch (element)
+                    {
+                        case "+":
+                            operands.Push(operands.Pop() + operands.Pop());
+                            break;
+                        case "-":
+                            operands.Push((operands.Pop() - operands.Pop()) * (-1));
+                            break;
+                        case "*":
+                            operands.Push(operands.Pop() * operands.Pop());
+                            break;
+                        case "/":
+                            operand = operands.Pop();
+                            if (operand == 0f)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                throw new DivideByZeroException("Kámo. Fakt dělíš nulou teď? (ಠ_ಠ)");
+                                Console.ForegroundColor = ConsoleColor.Gray;
+                            }
+                            operands.Push(operands.Pop() / operand);
+                            break;
+                        case "%":
+                            operand = operands.Pop();
+                            if (operand == 0f)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                throw new DivideByZeroException("Kámo. Fakt dělíš nulou teď? (ಠ_ಠ)");
+                                Console.ForegroundColor = ConsoleColor.Gray;
+                            }
+                            operands.Push(operands.Pop() % operand);
+                            break;
+                        case "^":
+                            operand = operands.Pop();
+                            operands.Push((float)(Math.Pow((double)(new decimal(operands.Pop())), (double)(new decimal(operand)))));
+                            break;
+                        default:
+                            float.TryParse(element, out operand);
+                            operands.Push(operand);
+                            break;
+                    }
+                }
+            }
+            catch (DivideByZeroException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Kámo. Fakt dělíš nulou teď? (ಠ_ಠ)");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return float.PositiveInfinity;
+            }
+            catch (InvalidOperationException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Máš tam nějakou chybu ve výrazu, kocoure.");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                return float.NegativeInfinity;
+            }
+            if (operands.Count > 1)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Jejda něco se pokazilo, starý brachu.");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine("   /\\_/\\  The council of wise owls is confused!   /\\_/\\\n  ((@v@))      Prosím zkontrolujte zadání!       ((@v@))\n ():::::()                                      ():::::()\n   VV-VV          /\\_/\\         /\\_/\\             VV-VV\n                 ((@v@))       ((@v@))\n                ():::::()     ():::::()\n                  VV-VV         VV-VV\n ");
+                return float.PositiveInfinity;
+            }
+            float ret = operands.Pop();
+            if (ret == -0)
+            {
+                ret = 0;
+            }
+            Console.WriteLine("Výsledek: " + ret);
+            return ret;
         }
 
         private static int GetMaxDepth(Node node)
