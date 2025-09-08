@@ -23,6 +23,17 @@ namespace Padající_piškvorky
         {
             string name;
             int wins;
+            char symbol;
+            int order;
+            ConsoleColor color;
+
+            public Player(int _order = 1, string _name = "def", ConsoleColor _color = ConsoleColor.DarkRed, char _symbol = 'O')//Předefinovaný variably aby šlo hráče vytvořit rovnou v main a ne vždycky manualně při kaźdém spuštění.
+            {
+                order = _order;
+                name = _name;
+                symbol = _symbol;
+                color = _color;
+            }
         }
         struct Pos
         {
@@ -32,13 +43,116 @@ namespace Padající_piškvorky
         class Game
         {
             int[,] board;
-            static int[,] PlaceToken( int player)
+            int toWin = 4;
+            public Player[] players;
+            public Player[] GeneratePlayersAuto(int players)
+            {
+                Player[] playerList = new Player[players];
+                ConsoleColor[] colors = new ConsoleColor[]
+              {
+                ConsoleColor.Red,
+                ConsoleColor.Green,
+                ConsoleColor.Blue,
+                ConsoleColor.Yellow,
+                ConsoleColor.Cyan,
+                ConsoleColor.Magenta,
+                ConsoleColor.White,
+                ConsoleColor.Gray,
+                ConsoleColor.DarkRed,
+                ConsoleColor.DarkGreen,
+                ConsoleColor.DarkBlue,
+                ConsoleColor.DarkCyan
+              };
+                
+                for (int i = 0; i < players; i++)
+                {
+                    playerList[i] = new Player(i, "Hráč" + (i+1), colors[i]);
+                }
+                return playerList;
+            }
+            public Player[] GeneratePlayer(int Players)
+            {
+                List<ConsoleColor> colors = new List<ConsoleColor>()
+                {
+                ConsoleColor.Red,
+                ConsoleColor.Green,
+                ConsoleColor.Blue,
+                ConsoleColor.Yellow,
+                ConsoleColor.Cyan,
+                ConsoleColor.Magenta,
+                ConsoleColor.White,
+                ConsoleColor.Gray,
+                ConsoleColor.DarkRed,
+                ConsoleColor.DarkGreen,
+                ConsoleColor.DarkBlue,
+                ConsoleColor.DarkCyan
+                };
+
+                List<string> colors_names = new List<string>()
+               {
+                "Červená",
+                "Zelená",
+                "Modrá",
+                "Žlutá",
+                "Cyan",
+                "Fialová",
+                "Bílá",
+                "Šedá",
+                "Tmavě červená",
+                "Tmavě zelená",
+                "Tmavě modrá",
+                "Tmavě cyanová"
+               };
+
+                for (int order = 0; order < Players; order++)
+                {
+                    Console.WriteLine("Vítejte hráči číslo " + (order + 1) + ". Zadejte svoji přezdívku.");
+                    string _name = Console.ReadLine();
+                    Console.WriteLine("Vaše jméno je nastaveno jako: " + _name);
+                    Console.WriteLine("Jaký chcete mít symbol na hrací ploše? Zadejte pouze jeden charakter.");
+                    while (true)
+                    {
+                        try
+                        {
+                            char _symbol = Console.ReadLine()[0];
+                            if (_symbol == ' ' || _symbol == '\n' || _symbol == '.')
+                            {
+                                Console.WriteLine("Zadejte pouze jedním symbolem. Symbol \'.\', není k dispozici.");
+                                continue;
+                            }
+                            Console.WriteLine("Váš symbol nastaven jako: " + _symbol);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Zadejte pouze jednim charakterem.");
+                            continue;
+                        }
+                        break;
+                    }
+                    Console.WriteLine("Vyberte svoji barvu.");
+                    for (int i = 0; i < colors.Count; i++)
+                    {
+                        Console.WriteLine((1 + i) + " " + colors[i]);
+                    }
+                    if(Int32.TryParse(Console.ReadLine(), out int N))
+                    {
+                        if (N<= colors.Count+1 && N > 0)
+                        {
+                            ConsoleColor _color = colors[N - 1];
+                            colors.RemoveAt(N - 1);
+                            colors_names.RemoveAt(N - 1);
+                        }
+                    }
+                }
+                return player;
+            }
+            void PlaceToken(int player)
              {
                 int col = -1;
                 bool placed = false;
                 while (true)
                 {
-                    Console.WriteLine("Zadejte číslo sloupce, kam chcete dát umístit žeton.");
+                    Console.WriteLine("Zadejte číslo sloupce, kam chcete umístit žeton.");
                     try
                     {
                         col = Convert.ToInt32(Console.ReadLine());
@@ -69,13 +183,13 @@ namespace Padající_piškvorky
                     }
                     break;
                 }
-                return board;
+                }
             }
-            public static bool Check(int[] pos, int player)
+            public bool Check(int[] pos, int player)
             {
-                return CheckRow(board, pos, player, toWin) || CheckCol(board, pos, player, toWin) || CheckDiag(board, pos, player, toWin);
+                return CheckRow(pos, player) || CheckCol(pos, player) || CheckDiag(pos, player);
             }
-            static bool CheckRow(int[] pos, int player)
+            bool CheckRow(int[] pos, int player)
             {
                 int con = 1; //kolik v Řadě napočítánů
                 for (int i = 1; i < toWin; i++)
@@ -104,7 +218,7 @@ namespace Padající_piškvorky
                 }
                 return (con >= toWin ? true : false);
             }
-            static bool CheckCol(int[] pos, int player)
+            bool CheckCol(int[] pos, int player)
             {
                 int con = 1; //kolik v Řadě napočítánů
                 for (int i = 1; i < toWin; i++)
@@ -133,7 +247,7 @@ namespace Padající_piškvorky
                 }
                 return (con >= toWin ? true : false);
             }
-            static bool CheckDiag(int[] pos, int player, int toWin = 5)
+            bool CheckDiag(int[] pos, int player)
             {
                 int con = 1; //kolik v Řadě napočítánů
                 for (int i = 1; i < toWin; i++)
