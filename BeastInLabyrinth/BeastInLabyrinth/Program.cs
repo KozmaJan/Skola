@@ -13,7 +13,7 @@ namespace BeastInLabyrinth
     }
     class Labyrinth {
         char[,] Map { get; set; }
-        int[] beastpos; //pamatuje si pozici zviřete
+        List<int[]> beastpos; //pamatuje si pozici zviřete
         public Labyrinth() {
             //Vytvoří labyrint podle konzole
             int col = 0;
@@ -55,9 +55,10 @@ namespace BeastInLabyrinth
             }
             Console.WriteLine();
         }
-        public int[] FindBeast() {
+        public List<int[]> FindBeast() {
             //Skript pro nalezení zvířete, vrátí x, y pozici zvířete a číslo od 1 do 4, které značí jeho natočení v prostoru (po směru hodin)
             int[] pos = { -1, -1, -1}; //Pokud zvíře nenajde vrátí arr{-1, -1, -1}
+            List<int[]> beastp = new List<int[]>();
 
             for (int i = 0; i < Map.GetLength(0); i++) //projde skrz všechny polÍćka dokud nenajde zvíře
             {
@@ -78,12 +79,17 @@ namespace BeastInLabyrinth
                                 pos = new int[3] { i, j, 4 };
                                 break;
                         }
+                                if (pos != new int[3] {-1, -1, -1 })
+                                {
+                                    beastp.Add(pos);
+                                    pos = new int[3] { -1, -1, -1 };
+                                }
                     }
                 }
             }
-            return pos;
+            return beastp;
         }
-        public void MoveBeast()
+        public void MoveBeast(int b)
         {
             //slovníky, určují kudy je v jistém natočením zvířete vpravo a dopředu
             Dictionary<int, int[]> right = new Dictionary<int, int[]>();
@@ -108,31 +114,31 @@ namespace BeastInLabyrinth
             //pohybové funkce
             void goForward()
             {
-                Map[beastpos[0], beastpos[1]] = '.';
-                beastpos[0] += front[beastpos[2]][0];
-                beastpos[1] += front[beastpos[2]][1];
-                Map[beastpos[0], beastpos[1]] = symbol[beastpos[2]];
+                Map[beastpos[b][0], beastpos[b][1]] = '.';
+                beastpos[b][0] += front[beastpos[b][2]][0];
+                beastpos[b][1] += front[beastpos[b][2]][1];
+                Map[beastpos[b][0], beastpos[b][1]] = symbol[beastpos[b][2]];
             }
             void turnRight()
             {
-                beastpos[2]++;
-                if (beastpos[2] > 4)
-                    beastpos[2] = 1;
-                Map[beastpos[0], beastpos[1]] = symbol[beastpos[2]];
+                beastpos[b][2]++;
+                if (beastpos[b][2] > 4)
+                    beastpos[b][2] = 1;
+                Map[beastpos[b][0], beastpos[b][1]] = symbol[beastpos[b][2]];
             }
 
             void turnLeft()
             {
-                beastpos[2]--;
-                if (beastpos[2] < 1)
-                    beastpos[2] = 4;
-                Map[beastpos[0], beastpos[1]] = symbol[beastpos[2]];
+                beastpos[b][2]--;
+                if (beastpos[b][2] < 1)
+                    beastpos[b][2] = 4;
+                Map[beastpos[b][0], beastpos[b][1]] = symbol[beastpos[b][2]];
             }
 
             //zkusí najít zvíře, vrátí error, pokud v plánku žádné není
             if (beastpos == null)
                 beastpos = FindBeast();
-            if (beastpos == new int[3] { -1, -1, -1 }) {
+            if (beastpos[b] == null) {
                 Console.WriteLine("Error 404: Beast not found.");
                 return;
             }
@@ -142,22 +148,22 @@ namespace BeastInLabyrinth
             //2. Pokud máš vpravo stěnu, vepředu stěnu a vlevo volno, otoč se vlevo
             //3. Pokud máš je vepředu v pravo od tebe stěna (šel si podél stěny a zrovna ses otočil vpravo), a máš před sebou volno jdi dopředu
             //4. Jinak se otoč vpravo
-            if (Map[beastpos[0] + right[beastpos[2]][0], beastpos[1] + right[beastpos[2]][1]] == 'X')
+            if (Map[beastpos[b][0] + right[beastpos[b][2]][0], beastpos[b][1] + right[beastpos[b][2]][1]] == 'X')
             {
-                if(Map[beastpos[0] + front[beastpos[2]][0], beastpos[1] + front[beastpos[2]][1]] == '.')
+                if(Map[beastpos[b][0] + front[beastpos[b][2]][0], beastpos[b][1] + front[beastpos[b][2]][1]] == '.')
                 {//1.
                     goForward();
                     return;
                 }
-                else if (Map[beastpos[0] + front[beastpos[2]][0], beastpos[1] + front[beastpos[2]][1]] == 'X' && Map[beastpos[0] + right[beastpos[2]][0]*(-1), beastpos[1] + right[beastpos[2]][1]*(-1)] == '.')
+                else if (Map[beastpos[b][0] + front[beastpos[b][2]][0], beastpos[b][1] + front[beastpos[b][2]][1]] == 'X' && Map[beastpos[b][0] + right[beastpos[b][2]][0]*(-1), beastpos[b][1] + right[beastpos[b][2]][1]*(-1)] == '.')
                 {//2.
                     turnLeft();
                     return;
                 }
             }
-            else if(Map[beastpos[0] + right[beastpos[2]][0] + front[beastpos[2]][0], beastpos[1] + right[beastpos[2]][1] + front[beastpos[2]][1]] == 'X')
+            else if(Map[beastpos[b][0] + right[beastpos[b][2]][0] + front[beastpos[b][2]][0], beastpos[b][1] + right[beastpos[b][2]][1] + front[beastpos[b][2]][1]] == 'X')
             {
-                if (Map[beastpos[0] + front[beastpos[2]][0], beastpos[1] + front[beastpos[2]][1]] == '.')
+                if (Map[beastpos[b][0] + front[beastpos[b][2]][0], beastpos[b][1] + front[beastpos[b][2]][1]] == '.')
                 {//3.
                     goForward();
                     return;
@@ -180,11 +186,15 @@ namespace BeastInLabyrinth
         }
         public void Play(int x) //pohyb zvířete+vykreslení mapy
         {
+            beastpos = FindBeast();
             for (int i = 0; i < x; i++)
             {
-                MoveBeast();
-                Console.WriteLine("Krok: " + (i+1));
-                ShowMap();
+                for (int c = 0; c < beastpos.Count; c++)
+                {
+                    MoveBeast(c);
+                } 
+                    Console.WriteLine("Krok: " + (i + 1));
+                    ShowMap();
             }
         }
         }
