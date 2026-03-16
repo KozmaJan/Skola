@@ -19,7 +19,7 @@ namespace TodoList.ViewModel
             // automaticky aktualizují, aniž bychom museli něco volat ručně.
             public ObservableCollection<Item> Items { get; set; }
             public MainWindowViewModel()
-            {
+            { 
                 Items = new ObservableCollection<Item>();
 
                 Items.Add(new Item()

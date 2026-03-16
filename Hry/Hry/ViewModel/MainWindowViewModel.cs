@@ -38,9 +38,47 @@ namespace Hry.ViewModel
         private TileViewModel Selected;
 
 
-        int height = 8;
-        int width = 8;
-        int bombs = 16;
+        private int _height = 8;
+        public int height
+        {
+            get => _height;
+            set
+            {
+                if (_height != value)
+                {
+                    _height = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _width = 8;
+        public int width
+        {
+            get => _width;
+            set
+            {
+                if (_width != value)
+                {
+                    _width = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int _bombs = 16;
+        public int bombs
+        {
+            get => _bombs;
+            set
+            {
+                if (_bombs != value)
+                {
+                    _bombs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         int[] dirs; //směry, pomocí kterých čekuje, kde se mini nachází a kde ne
 
@@ -164,9 +202,16 @@ namespace Hry.ViewModel
         }
         public int FindNeigbours(int pos) {//pomocí dirs, zkontroluje jestli se bomby nachází v sousedních políčkách
             int neigbours = 0;
+            if(pos % width == 0)
+                dirs = new int[] {-width, -width + 1, 1, width, width + 1 };
+            else if (pos % width == width - 1)
+                dirs = new int[] { -width - 1, -width, -1, width - 1, width};
+            else
+                dirs = new int[] { -width - 1, -width, -width + 1, -1, 1, width - 1, width, width + 1 };
+
             foreach (int dir in dirs)
             {
-                if (pos + dir >= 0 && pos + dir < Tiles.Count)
+                if (pos + dir >= 0 && pos + dir < Tiles.Count )
                 {
                     if(Tiles[pos + dir].Model.bomb == true)//pokud je v rozahu tabulky
                     {
@@ -178,10 +223,14 @@ namespace Hry.ViewModel
         }
         void RevealBombs()
         {
+            int i = 0;
             foreach(TileViewModel tile in Tiles)
             {
+                tile.Neighbours = FindNeigbours(i);
+                tile.Revealed = true;
                 if (tile.Model.bomb)
                     tile.Revealed = true;
+                i++;
             }
         }
 

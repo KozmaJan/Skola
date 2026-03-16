@@ -34,27 +34,23 @@
                        FontWeight="Bold"
                        VerticalAlignment="Center"/>
         </StackPanel>
-        <StackPanel>
+        <StackPanel >
             <TextBlock Canvas.Left="394" Canvas.Top="129"  FontSize="22" TextAlignment="Center">
             <Run Language="cs-cz" Text="Výška:"/>
             </TextBlock>
-            <TextBox x:Name="TextboxHeight" Width="34" Height="22" PreviewTextInput="PreviewNumInput" FontSize="16" Text="0"/>
-            <Slider Value="8" x:Name="SliderHeight" Minimum="4" Maximum="30"
+            <TextBox x:Name="TextboxHeight" Width="34" Height="22"  FontSize="16" Text="{Binding height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}"/>
+            <Slider Value="{Binding height, Mode=TwoWay}" x:Name="SliderHeight" Minimum="4" Maximum="30"
                 IsSnapToTickEnabled="True" TickFrequency="1"
-                ValueChanged="SliderChange"
                 Width="270"/>
-
             <TextBlock Canvas.Left="394" Canvas.Top="207"  FontSize="22" TextAlignment="Center" Text="Šířka:"/>
-            <TextBox x:Name="TextboxWidth" Width="34" Height="22" PreviewTextInput="PreviewNumInput" FontSize="16" Text="0"/>
-            <Slider Value="8" x:Name="SliderWidth" Minimum="4" Maximum="30"
+            <TextBox x:Name="TextboxWidth" Width="34" Height="22" FontSize="16" Text="{Binding width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}"/>
+            <Slider Value="{Binding width, Mode=TwoWay}" x:Name="SliderWidth" Minimum="4" Maximum="30"
                 IsSnapToTickEnabled="True" TickFrequency="1"
-                ValueChanged="SliderChange"
                 Width="270"/>
             <TextBlock Canvas.Left="394" Canvas.Top="283"  FontSize="22" TextAlignment="Center" Text="Počet Min:"/>
-            <TextBox x:Name="TextboxMineCount" Width="34" Height="22" PreviewTextInput="PreviewNumInput" FontSize="16" Text="0"/>
-            <Slider Value="13" x:Name="SliderBombs" Minimum="0" Maximum="270"
+            <TextBox x:Name="TextboxMineCount" Width="34" Height="22"  FontSize="16" Text="{Binding bombs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}"/>
+            <Slider Value="{Binding bombs, Mode=TwoWay}" x:Name="SliderBombs" Minimum="0" Maximum="270"
                 IsSnapToTickEnabled="True" TickFrequency="1"
-                ValueChanged="SliderChange"
                 Width="270"/>
         </StackPanel>
 
@@ -63,7 +59,7 @@
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <!-- 8x8 grid -->
-                    <UniformGrid Rows="8" Columns="8"/>
+                    <UniformGrid Rows="{Binding Height}" Columns="{Binding Width}"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
 
