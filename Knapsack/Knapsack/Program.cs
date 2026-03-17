@@ -68,7 +68,7 @@ namespace Knapsack
 
             Console.Write("    ");
             for (int c = 0; c < cols; c++)
-                Console.Write($"{c,5}");
+                Console.Write($"{c,4}");
             Console.WriteLine();
 
             for (int r = 0; r < rows; r++)
@@ -76,7 +76,7 @@ namespace Knapsack
                 Console.Write($"{r,4}");
                 for (int c = 0; c < cols; c++)
                 {
-                    Console.Write($"{sack[c, r],5}");
+                    Console.Write($"{sack[c, r],4}");
                 }
                 Console.WriteLine();
             }
@@ -96,9 +96,9 @@ namespace Knapsack
                     else {
                          if (j >= Costs[i - 1])
                          {
-                            if (sack[j - Costs[i - 1], i-1] < Values[i-1])
+                            if (sack[j - Costs[i - 1], i-1] + Values[i-1]>= sack[j, i - 1])
                             {
-                                sack[j, i] = Values[i - 1];
+                                sack[j, i] = sack[j - Costs[i - 1], i - 1] + Values[i - 1];
                       
                             }
                             else
