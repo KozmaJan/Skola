@@ -79,7 +79,7 @@ namespace NejdelsiPosloupnost
                     {
                         result.Add(new List<int>(current));
                         current.Clear();
-                        prevblank = true;
+                        prevblank = true;   
                     }
                     else if(prevblank)//prázdný posloupnosti
                     {
