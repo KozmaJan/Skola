@@ -11,7 +11,7 @@ namespace Knapsack
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            Knapsack Vikend = new Knapsack();
+            Knapsack Vikend = new Knapsack();   
             Vikend.MakeKnapsack(48);
             Vikend.BestKnapsack();
         }
